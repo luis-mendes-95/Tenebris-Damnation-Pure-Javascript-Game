@@ -1,0 +1,28 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+#canvas1 {
+    border: 5px solid black;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    translate: -50% -50%;
+    background: url('../../Backgrounds/Scene_1/background_scene_1.png');
+    background-size: 100% 100%;
+}
+
+#ridden_idle_unequipped_right{
+    display: none;
+}
+#ridden_idle_unequipped_left{
+    display: none;
+}
+#ridden_run_right{
+    display: none;
+}
+#ridden_run_left{
+    display: none;
+}

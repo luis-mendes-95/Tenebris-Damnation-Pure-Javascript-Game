@@ -36,6 +36,7 @@ class ButtonStart {
         this.game = game;
         this.width = (window.innerWidth * 0.10);
         this.height = this.width * 0.4
+        this.initialWidth = this.width;
         this.x = (window.innerWidth / 1.18);
         this.y = (window.innerHeight * 1.25) ;
         this.speed = 2.5;
@@ -50,12 +51,42 @@ class ButtonStart {
     }
 
     tick(){
-        if(this.y >= (window.innerHeight * 0.75) - this.height){
-            this.y -= this.speed;
+
+        const begginingAnimation = (origin) => {
+
+            if(origin === "fromBottom"){
+                if(this.y >= (window.innerHeight * 0.95) - this.height){
+                    this.y -= this.speed;
+                }
+                if(this.x >= (window.innerWidth * 0.95) - this.width){
+                    this.x -= this.speed;
+                }
+            }
+
         }
-        if(this.x >= (window.innerWidth * 0.95) - this.width){
-            this.x -= this.speed;
+        begginingAnimation("fromBottom");
+
+        const hoverTransform = () => {
+            if (start_button_hover.isColliding){
+
+                if(this.width <= this.initialWidth * 1.1) {
+                    this.width += 2;
+                    this.height = this.width * 0.4
+                    document.body.style.cursor = "pointer"
+                }
+
+            } else {
+                if(this.width >= this.initialWidth) {
+                    this.width -= 2;
+                    this.height = this.width * 0.4
+                    this.y += 1;
+                    this.x += 1;
+                    document.body.style.cursor = "auto"
+                }
+            }
         }
+        hoverTransform();
+
         start_button_hover.x = this.x
         start_button_hover.y = this.y
         start_button_hover.width = this.width
@@ -70,7 +101,7 @@ class GameTitle {
         this.height = this.width * 0.50;
         this.x = (window.innerWidth * 0.20)
         this.y = (window.innerHeight * -0.7) ;
-        this.speed = 0.5;
+        this.speed = 1.5;
         this.image = document.getElementById("image_cartola")
     }
 
@@ -134,7 +165,11 @@ class Game {
     }
 }
 
+//RUN THE GAME WHEN EVERYTHING LOADS UP
 window.addEventListener('load', ()=>{
+
+    window.addEventListener('resize', () => {location.reload();})
+
     const canvas = document.getElementById('canvas1');
     const ctx = canvas.getContext('2d');
     canvas.width = window.innerWidth - 10;
@@ -142,9 +177,8 @@ window.addEventListener('load', ()=>{
 
     const game = new Game(canvas);
 
-
     const animate = () => {
-        if(canvas.width > 650 && canvas.height > 375) {
+        if(canvas.width > 650 && canvas.height > 350) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             game.render(ctx);
             requestAnimationFrame(animate);
@@ -157,31 +191,42 @@ window.addEventListener('load', ()=>{
     }
     animate();
 
+    const checkMouseCollision = (a, b) => {
+        if(a.x >= b.x && a.x <= (b.x + b.width) 
+        && a.y >= b.y && a.y <= (b.y + b.height)){
+            start_button_hover.isColliding = true;
+        } else {
+            start_button_hover.isColliding = false;
+        }
+        console.log(a.isColliding)
+    }
 
     const hover_on_element = (hover_this_element) => {
+
+        canvas.addEventListener('click', function(e) {
+            e.preventDefault();
+    
+
+            if (start_button_hover.isColliding) {
+                window.location.href = './src/scenes/scene_1';
+            }
+
+        });
+        
 
         canvas.addEventListener('mousemove', function(event) {
 
             let rect = canvas.getBoundingClientRect();
             let mouseX = event.clientX - rect.left;
             let mouseY = event.clientY - rect.top;
-    
-            console.log("Mx: " + mouseX);
-            console.log("Hx: " + hover_this_element.x);
-            
-            console.log("My: " + mouseY);
-            console.log("Hy " + hover_this_element.y);
 
-            if(mouseX >= hover_this_element.x && mouseX <= (hover_this_element.x + hover_this_element.width)){
-                console.log("colisão detectada no eixo X")
-            }
-        
-    
+            let mouseToCollide = {x: mouseX, y: mouseY }
+
+            checkMouseCollision(mouseToCollide, hover_this_element);
+          
         });
     }
     hover_on_element(start_button_hover);
 
-
 })
 
-window.addEventListener('resize', () => {location.reload();})
