@@ -1,25 +1,50 @@
 import { Image } from "./lib/Image/Image.js";
+import { Button } from "./lib/Button/Button.js";
+import { ResolutionMessage } from "./lib/Messages/ResolutionMessage.js";
 
-let start_button_hover = {x: 0, y: 0, width: 0, height: 0}
+/**ALL VARIABLES DATA WILL BE STORED HERE*/
+let GameData = []
 
-/**width, height, x and y values and functions for all screen elements*/
-//dev logo
-let dev_logo_width = window.innerWidth * 0.15
-let dev_logo_height = dev_logo_width * 0.25
-let dev_logo_x = window.innerWidth / 100;
-let dev_logo_y = window.innerHeight;
-let dev_logo_speed = 0.5;
-let dev_logo_image = document.getElementById("dev_logo")
+/**FUNCTION TO SET ALL VARIABLES TO ELEMENTS THAT WILL BE RENDERED IN CANVAS */
+const SetGameElementsData = () => {
 
-//game title
-let game_title_width = window.innerWidth * 0.5
-let game_title_height = game_title_width * 0.50
-let game_title_x =  (window.innerWidth * 0.20)
-let game_title_y = (window.innerHeight * -0.7)
-let game_title_speed = 1.5;
-let game_title_image = document.getElementById("image_cartola")
+    //dev logo
+    const ImageDevLogo = () => {
+        GameData.dev_logo_width = window.innerWidth * 0.15
+        GameData.dev_logo_height = GameData.dev_logo_width * 0.25
+        GameData.dev_logo_x = window.innerWidth / 100;
+        GameData.dev_logo_y = window.innerHeight;
+        GameData.dev_logo_speed = 0.5;
+        GameData.dev_logo_image = document.getElementById("dev_logo")
+    }
+    ImageDevLogo();
 
+    //game title
+    const ImageGameTitle = () => {
+        GameData.game_title_width = window.innerWidth * 0.5
+        GameData.game_title_height = GameData.game_title_width * 0.50
+        GameData.game_title_x =  (window.innerWidth * 0.20)
+        GameData.game_title_y = (window.innerHeight * -0.7)
+        GameData.game_title_speed = 1.5;
+        GameData.game_title_image = document.getElementById("image_cartola")
+    }
+    ImageGameTitle();
 
+    //start button
+    const ImageStartButton = () => {
+        GameData.start_button_width = (window.innerWidth * 0.10)
+        GameData.start_button_height = GameData.start_button_width * 0.4
+        GameData.start_button_x = (window.innerWidth / 1.18)
+        GameData.start_button_y = (window.innerHeight * 1.25)
+        GameData.start_button_speed = 2.5;
+        GameData.start_button_image = document.getElementById("button_start")
+    }
+    ImageStartButton();
+
+}
+SetGameElementsData();
+
+/**DECLARATION OF CLASSES THAT WILL BE RENDERED IN CANVAS */
 class DevLogo extends Image {
     constructor(game, width, height, x, y, speed, image) {
 
@@ -38,7 +63,6 @@ class DevLogo extends Image {
 
     }
 }
-
 class GameTitle extends Image {
     constructor(game, width, height, x, y, speed, image) {
         super(game, width, height, x, y, speed, image);
@@ -55,27 +79,14 @@ class GameTitle extends Image {
 
     }
 }
+class ButtonStart extends Button {
+    constructor(game, width, height, x, y, speed, image){
+        super(game, width, height, x, y, speed, image);
 
-class ButtonStart {
-    constructor(game){
-        this.game = game;
-        this.width = (window.innerWidth * 0.10);
-        this.height = this.width * 0.4
-        this.initialWidth = this.width;
-        this.x = (window.innerWidth / 1.18);
-        this.y = (window.innerHeight * 1.25) ;
-        this.speed = 2.5;
-        this.image = document.getElementById("button_start")
+
     }
     
-
-    draw(context){
-
-        context.drawImage(this.image, this.x, this.y, this.width, this.height);
-
-    }
-
-    tick(){
+    Tick(){
 
         const begginingAnimation = (origin) => {
 
@@ -91,51 +102,12 @@ class ButtonStart {
         }
         begginingAnimation("fromBottom");
 
-        const hoverTransform = () => {
-            if (start_button_hover.isColliding){
-
-                if(this.width <= this.initialWidth * 1.1) {
-                    this.width += 2;
-                    this.height = this.width * 0.4
-                    document.body.style.cursor = "pointer"
-                }
-
-            } else {
-                if(this.width >= this.initialWidth) {
-                    this.width -= 2;
-                    this.height = this.width * 0.4
-                    this.y += 1;
-                    this.x += 1;
-                    document.body.style.cursor = "auto"
-                }
-            }
-        }
-        hoverTransform();
-
-        start_button_hover.x = this.x
-        start_button_hover.y = this.y
-        start_button_hover.width = this.width
-        start_button_hover.height = this.height
+        //this.HoverTransformScale();
     }
 }
 
 
-
-class ResolutionMessage {
-    constructor(game){
-        this.game = game;
-        this.width = (window.innerWidth * 0.5);
-        this.height = (window.innerHeight * 0.5);
-        this.x = (window.innerWidth * 0.25)
-        this.y = (window.innerHeight * 0.25) ;
-    }
-
-    draw(context){
-        context.fillRect(this.x, this.y, this.width, this.height);
-    }
-
-}
-
+/**MAIN CLASS*/
 class Game {
     constructor(canvas){
 
@@ -147,11 +119,9 @@ class Game {
         StartCanvas();
 
         const RenderGameElements = () => {
-            
-            this.brand_logo = new DevLogo(this, dev_logo_width, dev_logo_height, dev_logo_x, dev_logo_y, dev_logo_speed, dev_logo_image)
-            this.ButtonStart = new ButtonStart(this)
-            this.GameTitle = new GameTitle(this, game_title_width, game_title_height, game_title_x, game_title_y, game_title_speed, game_title_image  )
-    
+            this.brand_logo = new DevLogo(this, GameData.dev_logo_width, GameData.dev_logo_height, GameData.dev_logo_x, GameData.dev_logo_y, GameData.dev_logo_speed, GameData.dev_logo_image)
+            this.ButtonStart = new ButtonStart(this, GameData.start_button_width, GameData.start_button_height, GameData.start_button_x, GameData.start_button_y, GameData.start_button_speed, GameData.start_button_image )
+            this.GameTitle = new GameTitle(this, GameData.game_title_width, GameData.game_title_height, GameData.game_title_x, GameData.game_title_y, GameData.game_title_speed, GameData.game_title_image  )
             this.ResolutionMessage = new ResolutionMessage(this)
         }
         RenderGameElements();
@@ -161,87 +131,60 @@ class Game {
     }
     render(context){
 
-        this.ButtonStart.draw(context)
-        this.ButtonStart.tick();
+        const StartAllElements = () => {
 
-
-        this.GameTitle.BeginPlay(context)
-        this.GameTitle.Tick()
-
-        this.brand_logo.BeginPlay(context)
-        this.brand_logo.Tick();
-
+            this.ButtonStart.BeginPlay(context)
+            this.ButtonStart.Tick();
+       
+            this.GameTitle.BeginPlay(context)
+            this.GameTitle.Tick()
+    
+            this.brand_logo.BeginPlay(context)
+            this.brand_logo.Tick();
+        }
+        StartAllElements();
 
     }
     renderResolutionMessage(context){
-        this.brand_logo.draw(context)
-        this.brand_logo.tick();
+        this.brand_logo.BeginPlay(context)
+        this.brand_logo.Tick();
         this.ResolutionMessage.draw(context)
     }
 }
 
 //RUN THE GAME WHEN EVERYTHING LOADS UP
-window.addEventListener('load', ()=>{
+const BeginPlay = () => {
 
-    window.addEventListener('resize', () => {location.reload();})
+    window.addEventListener('load', ()=>{
 
-    const canvas = document.getElementById('canvas1');
-    const ctx = canvas.getContext('2d');
-    canvas.width = window.innerWidth - 10;
-    canvas.height = window.innerHeight - 10;
+        window.addEventListener('resize', () => {location.reload();})
 
-    const game = new Game(canvas);
-
-    const animate = () => {
-        if(canvas.width > 650 && canvas.height > 350) {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            game.render(ctx);
-            requestAnimationFrame(animate);
-        } else {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            game.renderResolutionMessage(ctx);
-            requestAnimationFrame(animate);
-        }
-
-    }
-    animate();
-
-    const checkMouseCollision = (a, b) => {
-        if(a.x >= b.x && a.x <= (b.x + b.width) 
-        && a.y >= b.y && a.y <= (b.y + b.height)){
-            start_button_hover.isColliding = true;
-        } else {
-            start_button_hover.isColliding = false;
-        }
-        console.log(a.isColliding)
-    }
-
-    const hover_on_element = (hover_this_element) => {
-
-        canvas.addEventListener('click', function(e) {
-            e.preventDefault();
-    
-
-            if (start_button_hover.isColliding) {
-                window.location.href = './src/scenes/scene_1';
-            }
-
-        });
+        const GetCanvasAndStart = () => {
+            const canvas = document.getElementById('canvas1');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth - 10;
+            canvas.height = window.innerHeight - 10;
         
+            const game = new Game(canvas);
+        
+            const Tick = () => {
+                if(canvas.width > 650 && canvas.height > 350) {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    game.render(ctx);
+                    requestAnimationFrame(Tick);
+                } else {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    game.renderResolutionMessage(ctx);
+                    requestAnimationFrame(Tick);
+                }
+        
+            }
+            Tick();
+        }
+        GetCanvasAndStart();
+    
+    })
+}
+BeginPlay();
 
-        canvas.addEventListener('mousemove', function(event) {
-
-            let rect = canvas.getBoundingClientRect();
-            let mouseX = event.clientX - rect.left;
-            let mouseY = event.clientY - rect.top;
-
-            let mouseToCollide = {x: mouseX, y: mouseY }
-
-            checkMouseCollision(mouseToCollide, hover_this_element);
-          
-        });
-    }
-    hover_on_element(start_button_hover);
-
-})
 
