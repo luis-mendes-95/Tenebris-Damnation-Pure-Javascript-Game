@@ -3,7 +3,7 @@ import { Button } from "./lib/Button/Button.js";
 import { ResolutionMessage } from "./lib/Messages/ResolutionMessage.js";
 
 /**ALL VARIABLES DATA WILL BE STORED HERE*/
-let GameData = []
+let GameData = {}
 
 /**FUNCTION TO SET ALL VARIABLES TO ELEMENTS THAT WILL BE RENDERED IN CANVAS */
 const SetGameElementsData = () => {
@@ -102,7 +102,7 @@ class ButtonStart extends Button {
         }
         begginingAnimation("fromBottom");
 
-        //this.HoverTransformScale();
+        this.HoverTransformScale();
     }
 }
 
@@ -115,6 +115,7 @@ class Game {
             this.canvas = canvas;
             this.width = this.canvas.width;
             this.height = this.canvas.height;
+
         }
         StartCanvas();
 
@@ -164,11 +165,14 @@ const BeginPlay = () => {
             const ctx = canvas.getContext('2d');
             canvas.width = window.innerWidth - 10;
             canvas.height = window.innerHeight - 10;
+            GameData.GameWidth = canvas.width;
+            GameData.GameHeight = canvas.height;
         
             const game = new Game(canvas);
         
             const Tick = () => {
                 if(canvas.width > 650 && canvas.height > 350) {
+
                     ctx.clearRect(0, 0, canvas.width, canvas.height);
                     game.render(ctx);
                     requestAnimationFrame(Tick);
