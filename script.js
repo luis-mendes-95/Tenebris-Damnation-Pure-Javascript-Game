@@ -1,33 +1,35 @@
+import { Image } from "./lib/Image/Image.js";
+
 let start_button_hover = {x: 0, y: 0, width: 0, height: 0}
 
+/**width, height, x and y values and functions for all screen elements*/
+//dev logo
+let dev_logo_width = window.innerWidth * 0.15
+let dev_logo_height = dev_logo_width * 0.25
+let dev_logo_x = window.innerWidth / 100;
+let dev_logo_y = window.innerHeight;
+let dev_logo_speed = 0.5;
+let dev_logo_image = document.getElementById("dev_logo")
 
-class Player {
-    constructor(game){
-        this.game = game;
-        this.points = 0;
-    }
-}
 
-class DevLogo {
-    constructor(game){
-        this.game = game;
-        this.width = window.innerWidth * 0.15;
-        this.height = this.width * 0.25;
-        this.x = (window.innerWidth / 100);
-        this.y = window.innerWidth /  window.innerWidth * window.innerHeight ;
-        this.speed = 0.5;
-        this.image = document.getElementById("dev_logo")
-    }
+//
 
-    draw(context){
-        context.drawImage(this.image, this.x, this.y, this.width, this.height);
+class DevLogo extends Image {
+    constructor(game, width, height, x, y, speed, image) {
+
+        super(game, width, height, x, y, speed, image);
+
     }
 
-    tick(){
+    Tick(){
 
-        if(this.y >= (window.innerHeight - (this.height * 1.5))){
-            this.y -= this.speed;
+        const animation_from_bottom = () => {
+            if(this.y >= (window.innerHeight - (this.height * 1.5))){
+                this.y -= this.speed;
+            }
         }
+        animation_from_bottom();
+
     }
 }
 
@@ -138,7 +140,7 @@ class Game {
         this.width = this.canvas.width;
         this.height = this.canvas.height;
 
-        this.brand_logo = new DevLogo(this)
+        this.brand_logo = new DevLogo(this, dev_logo_width, dev_logo_height, dev_logo_x, dev_logo_y, dev_logo_speed, dev_logo_image)
         this.ButtonStart = new ButtonStart(this)
         this.GameTitle = new GameTitle(this)
 
@@ -153,8 +155,8 @@ class Game {
         this.GameTitle.draw(context)
         this.GameTitle.tick()
 
-        this.brand_logo.draw(context)
-        this.brand_logo.tick();
+        this.brand_logo.BeginPlay(context)
+        this.brand_logo.Tick();
 
 
     }
