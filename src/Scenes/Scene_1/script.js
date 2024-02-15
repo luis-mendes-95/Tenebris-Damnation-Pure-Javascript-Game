@@ -1,135 +1,210 @@
-let start_button_hover = {x: 0, y: 0, width: 0, height: 0}
 
-class Projectile {
-    constructor(){
-        this.width = 10;
-        this.height = 3;
-        this.x = 10;
-        this.y - 0;
-        this.speed = 20;
-        this.free = true;
+import { Button } from "../../../lib/Button/Button.js" 
+import {ResolutionMessage} from "../../../lib/Messages/ResolutionMessage.js"
+
+/**ALL VARIABLES DATA WILL BE STORED HERE*/
+let GameData = {}
+
+/**FUNCTION TO SET ALL VARIABLES TO ELEMENTS THAT WILL BE RENDERED IN CANVAS */
+const SetGameElementsData = () => {
+
+    //dev logo
+    const RiddenCharacter = () => {
+
+        GameData.RiddenCharacterAnimationIdleRight = []
+        GameData.RiddenCharacterAnimationIdleLeft = []
+
+        GameData.dev_logo_width = window.innerWidth * 0.15
+        GameData.dev_logo_height = GameData.dev_logo_width * 0.25
+        GameData.dev_logo_x = window.innerWidth / 100;
+        GameData.dev_logo_y = window.innerHeight;
+        GameData.dev_logo_speed = 0.5;
+        GameData.dev_logo_image = document.getElementById("dev_logo")
     }
-    draw(context){
-        if(!this.free){
-            context.fillRect(this.x, this.y, this.width, this.height)
+    RiddenCharacter();
+
+    
+
+}
+SetGameElementsData();
+
+/**DECLARATION OF CLASSES THAT WILL BE RENDERED IN CANVAS */
+class DevLogo extends Image {
+    constructor(game, width, height, x, y, speed, image) {
+
+        super(game, width, height, x, y, speed, image);
+
+    }
+
+    Tick(){
+
+        const animation_from_bottom = () => {
+            if(this.y >= (window.innerHeight - (this.height * 1.5))){
+                this.y -= this.speed;
+            }
         }
-    }
-    tick(){
-        if(!this.free){
-          this.x += this.speed;  
-        }
-    }
-    start(x, y){
-        this.x = x;
-        this.y = y;
-        this.free = false;
-    }
-    reset(){
-        this.free = true;
+        animation_from_bottom();
+
+        this.HoverTransformScale(GameData);
+
+        this.GoToLink(GameData, "http://tejas.com")
+
     }
 }
-
-class Player {
-    constructor(game){
-
-        this.game = game;
-
-        this.width = window.innerWidth * 0.3;
-        this.height = this.width * 0.9;
-        this.x = 200;
-        this.y = 200;
-
-        this.isAttackig = false;
-        this.isDeffending = false;
-        this.isRunningRight = false;
-        this.isRunningLeft = false;
-        this.isInAir = false;
-
-        this.currentAttack = 1;
-
-        this.speed = 5;
-        this.health = 100;
+class GameTitle extends Image {
+    constructor(game, width, height, x, y, speed, image) {
+        super(game, width, height, x, y, speed, image);
     }
-    draw(context){
-        context.fillRect(this.x, this.y, this.width, this.height);
+
+    Tick(){
+
+        const animation_from_top = () => {
+            if(this.y <= (window.innerHeight - (window.innerHeight * 0.98))){
+                this.y += this.speed;
+            }
+        }
+        animation_from_top();
+
     }
-    tick(){
-        if (this.game.keysPressed.indexOf('a') > -1) this.x -= this.speed;
-        if (this.game.keysPressed.indexOf('d') > -1) this.x += this.speed;
-        if ((this.x + this.width * 0.5) < 0) this.x = 0 - (this.width * 0.5);
-        if (this.x >= window.innerWidth - (this.width * 0.5)) this.x = window.innerWidth - (this.width * 0.5)
-    }
-    fire(){
-        const projectile = this.game.getProjectile();
-        if(projectile) projectile.start(this.x, this.y);
+}
+class ButtonStart extends Button {
+    constructor(game, width, height, x, y, speed, image){
+        super(game, width, height, x, y, speed, image);
+
+
     }
     
+    Tick(){
+
+        const begginingAnimation = (origin) => {
+
+            if(origin === "fromBottom"){
+                if(this.y >= (window.innerHeight * 0.95) - this.height){
+                    this.y -= this.speed;
+                }
+                if(this.x >= (window.innerWidth * 0.95) - this.width){
+                    this.x -= this.speed;
+                }
+            }
+
+        }
+        begginingAnimation("fromBottom");
+
+        this.HoverTransformScale(GameData);
+
+        this.GoToLink(GameData, "src/Scenes/Scene_1")
+
+    }
+
+    t
 }
 
+
+/**MAIN CLASS*/
 class Game {
     constructor(canvas){
 
-        this.canvas = canvas;
-        this.width = this.canvas.width;
-        this.height = this.canvas.height;
-        this.keysPressed = []
-        this.Player = new Player(this)
+        const StartCanvas = () => {
+            this.canvas = canvas;
+            this.width = this.canvas.width;
+            this.height = this.canvas.height;
 
-        this.projectilesPool = [];
-        this.numberOfProjectiles = 10;
-        this.createProjectiles();
-        console.log(this.projectilesPool)
+        }
+        StartCanvas();
 
-        window.addEventListener('keydown', (e)=>{
-            if(this.keysPressed.indexOf(e.key) === -1){
-                this.keysPressed.push(e.key);
-            }
-            console.log(this.keysPressed)
-        })
+        const RenderGameElements = () => {
 
-        window.addEventListener('keyup', (e)=>{
-            const index = this.keysPressed.indexOf(e.key);
-            if (index > -1) this.keysPressed.splice(index, 1);
-            console.log(this.keysPressed)
-        })
+            this.ResolutionMessage = new ResolutionMessage(this)
+        }
+        RenderGameElements();
+
+       
 
     }
     render(context){
-        this.Player.draw(context)
-        this.Player.tick()
-    }
-    createProjectiles(){
-        for (let i = 0; i < this.numberOfProjectiles; i++){
-            this.projectilesPool.push(new Projectile());
-        }
-    }
-    getProjectile(){
-        for (let i = 0; i < this.projectilesPool.length; i++){
-            if (this.projectilesPool[i].free) return this.projectilesPool[i]
-        }
-    }
 
+        const StartAllElements = () => {
+
+
+        }
+        StartAllElements();
+
+    }
+    renderResolutionMessage(context){
+        this.ResolutionMessage.draw(context)
+    }
 }
 
 //RUN THE GAME WHEN EVERYTHING LOADS UP
-window.addEventListener('load', ()=>{
+const BeginPlay = () => {
 
-    window.addEventListener('resize', () => {location.reload();})
+    window.addEventListener('load', ()=>{
 
-    const canvas = document.getElementById('canvas1');
-    const ctx = canvas.getContext('2d');
-    canvas.width = window.innerWidth - 10;
-    canvas.height = window.innerHeight - 10;
+        window.addEventListener('resize', () => {location.reload();})
 
-    const game = new Game(canvas);
-
-    const animate = () => {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        game.render(ctx);
-        requestAnimationFrame(animate);
-    }
-    animate();
+        const GetCanvasAndStart = () => {
+            const canvas = document.getElementById('canvas1');
 
 
-})
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth - 10;
+            canvas.height = window.innerHeight - 10;
+            GameData.GameWidth = canvas.width;
+            GameData.GameHeight = canvas.height;
+        
+            const game = new Game(canvas);
+        
+            const Tick = () => {
+                
+                if(canvas.width > 650 && canvas.height > 350) {
+
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    game.render(ctx);
+                    requestAnimationFrame(Tick);
+                } else {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    game.renderResolutionMessage(ctx);
+                    requestAnimationFrame(Tick);
+                }
+        
+            }
+            Tick();
+
+            /**GETS MOUSE X AND Y POSITION*/
+            canvas.addEventListener('mousemove', function(event) {
+    
+                let rect = canvas.getBoundingClientRect();
+                let x = event.clientX - rect.left;
+                let y = event.clientY - rect.top;
+
+                GameData.MouseX = x;
+                GameData.MouseY = y;       
+        
+            });
+
+            /**GETS IF MOUSE IS CLICKED */
+            canvas.addEventListener('click', function(event) {
+    
+                let rect = canvas.getBoundingClientRect();
+                let x = event.clientX - rect.left;
+                let y = event.clientY - rect.top;
+
+                GameData.Clicked = true;
+
+                setTimeout(() => {
+                    GameData.Clicked = false;
+                }, 200);  
+        
+            });
+
+
+        }
+        GetCanvasAndStart();
+
+
+    
+    })
+}
+BeginPlay();
+
 

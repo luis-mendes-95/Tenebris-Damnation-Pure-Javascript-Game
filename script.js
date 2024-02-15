@@ -61,6 +61,10 @@ class DevLogo extends Image {
         }
         animation_from_bottom();
 
+        this.HoverTransformScale(GameData);
+
+        this.GoToLink(GameData, "http://tejas.com")
+
     }
 }
 class GameTitle extends Image {
@@ -102,8 +106,13 @@ class ButtonStart extends Button {
         }
         begginingAnimation("fromBottom");
 
-        this.HoverTransformScale();
+        this.HoverTransformScale(GameData);
+
+        this.GoToLink(GameData, "/src/Scenes/Scene_1")
+
     }
+
+    t
 }
 
 
@@ -162,6 +171,8 @@ const BeginPlay = () => {
 
         const GetCanvasAndStart = () => {
             const canvas = document.getElementById('canvas1');
+
+
             const ctx = canvas.getContext('2d');
             canvas.width = window.innerWidth - 10;
             canvas.height = window.innerHeight - 10;
@@ -171,6 +182,7 @@ const BeginPlay = () => {
             const game = new Game(canvas);
         
             const Tick = () => {
+                    
                 if(canvas.width > 650 && canvas.height > 350) {
 
                     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -184,8 +196,39 @@ const BeginPlay = () => {
         
             }
             Tick();
+
+            /**GETS MOUSE X AND Y POSITION*/
+            canvas.addEventListener('mousemove', function(event) {
+    
+                let rect = canvas.getBoundingClientRect();
+                let x = event.clientX - rect.left;
+                let y = event.clientY - rect.top;
+
+                GameData.MouseX = x;
+                GameData.MouseY = y;       
+        
+            });
+
+            /**GETS IF MOUSE IS CLICKED */
+            canvas.addEventListener('click', function(event) {
+    
+                let rect = canvas.getBoundingClientRect();
+                let x = event.clientX - rect.left;
+                let y = event.clientY - rect.top;
+
+                GameData.Clicked = true;
+
+                setTimeout(() => {
+                    GameData.Clicked = false;
+                }, 200);  
+        
+            });
+
+
         }
         GetCanvasAndStart();
+
+
     
     })
 }

@@ -14,15 +14,19 @@
     background-size: 100% 100%;
 }
 
-#ridden_idle_unequipped_right{
+
+#brand_logo{
     display: none;
 }
-#ridden_idle_unequipped_left{
+#button_start{
     display: none;
 }
-#ridden_run_right{
+#image_cartola{
     display: none;
 }
-#ridden_run_left{
+#image_cartas{
+    display: none;
+}
+#dev_logo{
     display: none;
 }
