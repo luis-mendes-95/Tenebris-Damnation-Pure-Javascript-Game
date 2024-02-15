@@ -11,8 +11,14 @@ let dev_logo_y = window.innerHeight;
 let dev_logo_speed = 0.5;
 let dev_logo_image = document.getElementById("dev_logo")
 
+//game title
+let game_title_width = window.innerWidth * 0.5
+let game_title_height = game_title_width * 0.50
+let game_title_x =  (window.innerWidth * 0.20)
+let game_title_y = (window.innerHeight * -0.7)
+let game_title_speed = 1.5;
+let game_title_image = document.getElementById("image_cartola")
 
-//
 
 class DevLogo extends Image {
     constructor(game, width, height, x, y, speed, image) {
@@ -29,6 +35,23 @@ class DevLogo extends Image {
             }
         }
         animation_from_bottom();
+
+    }
+}
+
+class GameTitle extends Image {
+    constructor(game, width, height, x, y, speed, image) {
+        super(game, width, height, x, y, speed, image);
+    }
+
+    Tick(){
+
+        const animation_from_top = () => {
+            if(this.y <= (window.innerHeight - (window.innerHeight * 0.98))){
+                this.y += this.speed;
+            }
+        }
+        animation_from_top();
 
     }
 }
@@ -96,28 +119,7 @@ class ButtonStart {
     }
 }
 
-class GameTitle {
-    constructor(game){
-        this.game = game;
-        this.width = window.innerWidth * 0.5;
-        this.height = this.width * 0.50;
-        this.x = (window.innerWidth * 0.20)
-        this.y = (window.innerHeight * -0.7) ;
-        this.speed = 1.5;
-        this.image = document.getElementById("image_cartola")
-    }
 
-    draw(context){
-        context.drawImage(this.image, this.x, this.y, this.width, this.height);
-    }
-
-    tick(){
-
-        if(this.y <= (window.innerHeight - (window.innerHeight * 0.98))){
-            this.y += this.speed;
-        }
-    }
-}
 
 class ResolutionMessage {
     constructor(game){
@@ -136,15 +138,26 @@ class ResolutionMessage {
 
 class Game {
     constructor(canvas){
-        this.canvas = canvas;
-        this.width = this.canvas.width;
-        this.height = this.canvas.height;
 
-        this.brand_logo = new DevLogo(this, dev_logo_width, dev_logo_height, dev_logo_x, dev_logo_y, dev_logo_speed, dev_logo_image)
-        this.ButtonStart = new ButtonStart(this)
-        this.GameTitle = new GameTitle(this)
+        const StartCanvas = () => {
+            this.canvas = canvas;
+            this.width = this.canvas.width;
+            this.height = this.canvas.height;
+        }
+        StartCanvas();
 
-        this.ResolutionMessage = new ResolutionMessage(this)
+        const RenderGameElements = () => {
+            
+            this.brand_logo = new DevLogo(this, dev_logo_width, dev_logo_height, dev_logo_x, dev_logo_y, dev_logo_speed, dev_logo_image)
+            this.ButtonStart = new ButtonStart(this)
+            this.GameTitle = new GameTitle(this, game_title_width, game_title_height, game_title_x, game_title_y, game_title_speed, game_title_image  )
+    
+            this.ResolutionMessage = new ResolutionMessage(this)
+        }
+        RenderGameElements();
+
+       
+
     }
     render(context){
 
@@ -152,8 +165,8 @@ class Game {
         this.ButtonStart.tick();
 
 
-        this.GameTitle.draw(context)
-        this.GameTitle.tick()
+        this.GameTitle.BeginPlay(context)
+        this.GameTitle.Tick()
 
         this.brand_logo.BeginPlay(context)
         this.brand_logo.Tick();
